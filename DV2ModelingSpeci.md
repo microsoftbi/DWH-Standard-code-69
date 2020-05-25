@@ -2,6 +2,22 @@
 title: "Data Vault Data Modeling Specification v 2.0.2 Data Vault数据建模规范V2.0.2"
 ---
 
+译注
+====
+
+翻译此篇仅为个人爱好。从事数据仓库这些年，有幸能知道Data
+Vault这个概念，并且在自己的项目中能够使用它，唯一遗憾的是对于Dan的这个规范文档看得一直是支离破碎。最近静下心来得以用读圣经得方式来读这个文档。当然在Data
+Vault的知识体系中，这个也只能算是绝世武功的目录而已，所以我一直认为这个文档的地位，跟佛教的心经是一样的。
+
+Translate this specification is just my favorite. I start to work in DWH area
+for many years, and I am luck that I can know Data Vault, and even bring it to
+my job. But it is really a pity that I always read it with small pieces.
+Recently I start to read it just like to ready bible. Of course in whole Data
+Vault knowledge base, this specification is only an index, but it is like the
+Heart Sutra of Buddhism.
+
+
+
 概要
 ====
 
