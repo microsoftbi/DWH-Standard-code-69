@@ -1,5 +1,5 @@
 ---
-title: "Data Vault Data Modeling Specification v 2.0.2 Data Vault数据建模规范V2.0.2"
+title: "Data Vault   \n  \nData Modeling Specification v 2.0.2 Data Vault数据建模规范V2.0.2"
 ---
 
 译注
@@ -15,8 +15,6 @@ my job. But it is really a pity that I always read it with small pieces.
 Recently I start to read it just like to ready bible. Of course in whole Data
 Vault knowledge base, this specification is only an index, but it is like the
 Heart Sutra of Buddhism.
-
-
 
 概要
 ====
@@ -157,15 +155,21 @@ decision-making engine is in its’ strength prediction. Additional attributes m
 be added or attached to the Exploration Link in order to meet the needs of the
 neural network or deep learning algorithms.
 
-Satellites 
------------
+Satellites实体
+--------------
 
 Delta Driven Descriptive Information (data that changes over time).
+
+增量驱动的描述性信息，随时间的变动而变动
 
 Satellites are driven by CDC (change data capture) and split by rate of change
 or type (classification) of data. Satellites contain the "data over time".
 
+Satellite是受变更捕获驱动的，并且根据信息的变化频率或者信息的分类来拆分。Satellite包含的是随时间变化的数据。
+
 Below is a list of Satellite Sub Classes
+
+以下是Satellite的子类别
 
 ### Multi-Active Satellite 
 
@@ -276,34 +280,48 @@ platform. Staging tables have two main purposes: a) to provide performance with
 bulk loaders, b) to provide parallelism on loads to the Data Vault (raw data
 warehouse) downstream.
 
+集结表是结构化数据的集合。他们通常是从一个常规的数据仓库平台加载过来的。集结表的设计有两个目的，一个是供bulk
+load发挥性能，一个是提供往下一层Data Vault并行加载。
+
 On occasions where bulk loaders cannot compute the system fields on load, a
 second level staging table may be built. The second level staging table then
 houses the primary key of the staging record, followed by the computed system
 fields (such as Hash Keys, Hash Differences, Load Dates, and record sources).
 
+有时bulk
+load无法在加载的过程中进行计算，这个时候可以考虑再加一层集结表，这一层的表仍然是需要保留来自上一层的主键，以及计算列，包括哈希键，哈希差异，加载时间以及记录源。
+
 Note: for details on the loading process see the Data Vault Implementation
 Standards guidelines.
 
-Landing Zone Files (in NoSQL environment) 
-------------------------------------------
+留意：关于加载流程的更多信息请参考Data
+Vault实现规范指导。（译者注：这个文档直到今天也没有被找到。）
 
-Landing Zone Files are simply files that have been loaded or dumped in to a
+着陆区文件（在NoSql环境中）Landing Zone Files (in NoSQL environment) 
+---------------------------------------------------------------------
+
+Landing Zone Files are simply files that have been loaded or dumped into a
 Hadoop base environment, or other alternative metadata managed storage
 environment. A metadata managed storage environment has the following
 characteristics: parallel access, partitioning, sharding, and possibly
 sub-partitioning of the data, where the metadata is registered with an access
 engine (similar to Hadoop).
 
-Common field elements 
-======================
+着陆区的文件通常指加载到Hadoop环境的文件，或者其它元数据托管的存储环境，这种环境通常有以下特征：并行访问，分区，分片，并且可以做子分区，它们的元数据也是可以被访问到的，就像Hadoop一样。
+
+公共字段元素Common field elements 
+==================================
 
 Common field elements are SYSTEM DRIVEN, and SYSTEM Managed – they do \*NOT\*
 fall under the scrutiny of an audit. They are generated fields on the way IN to
 the target (stage, data vault, or star schema) and are necessary for assisting
 in the traceability of individual fields.
 
-Hash Key (Optional \*\* see note below) 
-----------------------------------------
+公共字段元素是系统生成，系统管理的，它们的目的不是为了安全或者审计。他们是到目标区域，比如集合层，Data
+Vault层或者星型结构的派生列，也是为了辅助单独的列辅助追钟的必要方法。
+
+哈希键（可选列）Hash Key (Optional \*\* see note below) 
+--------------------------------------------------------
 
 A Hash Key is a deterministic value produced by a given hashing function. The
 requirement is to leverage the business key attribute(s) as input and produce a
@@ -311,11 +329,15 @@ deterministic output. Due to the nature of deterministic calculation data can be
 loaded in parallel without any foreign key lookups (which is what Sequence
 identifiers require in order to resolve parent child relationships).
 
+哈希键是一种根据给定哈希函数计算后得到的一个不可逆的值。这个过程是利用输入的业务键（或者复合业务键），然后输出一个不可逆的值。这种方法不需要进行外键查找，所以可以实现加载的并行。（顺序标识位是需要外键查找来解决父子层级关系的。）
+
 The purpose of the Hash Key is not to be encrypted and not to protect the data.
 However there are a series of encryption functions which produce hash-like
 values that may be utilized. This is particularly helpful when the clear-text
 data cannot leave physical boundaries or data stores (either in country, or on
 premise) due to security and privacy regulations.
+
+哈希键的目的不是为了加密数据也不是为了保护数据。确实有些加密函数跟哈希计算很像，这在明文数据根据安全以及隐私条例不能保存的时候能起到一定作用，比如在国家安全类项目或者本地项目。
 
 Due to the deterministic nature of Hashing, most hashing algorithms can be
 applied for average equal random distribution across multiple partitions or
@@ -327,6 +349,8 @@ natural keys (including potentially long text fields) internally, then an
 externally declared Hash Key is no longer required. \*\*\* Remember, the core
 definition of a Hub is: Unique List Of Business Keys \*\*\*
 
+留意：哈希键在某些平台下是不是必须的，比如Teradata，其本身就带这种哈希计算的业务键列。所以如果一个平台如果已经有了类似的功能，是没有必要创建一个额外的哈希键的。\*\*\*请记住，Hub的核心定义是：业务键的唯一序列\*\*\*
+
 NOTE 2: Some Business keys (not necessarily natural keys) are sequence numbers,
 for example: Invoice Number, and will never change regardless of the business
 position. It is possible in these cases to avoid using Hash Keys, and simply
@@ -335,11 +359,15 @@ cases – a sequence number surrogate key is not recommended. In fact, sequence
 number surrogate keys have been deprecated due to their inability to scale. \*\*
 See the notes below for further information \*\*
 
+留意2：有些业务键（不一定是自然键）是一种序列数值，比如，发票编号，从业务的角度来说这个值是从来不会变化的。像这种情况就可以不使用哈希键，而是直接使用这个业务键。也就是说，即使在这类情况下，顺序编号的代理键也是不被建议的。并且实际上，顺序编号的代理键由于它们无法被扩展所以不是被推荐的。
+
 NOTE 3: Hash results should be stored in binary format in platforms that support
 it, and in big number format in platforms that support it. Java, and platforms
 like SnowflakeDB support number(32) unsigned. Which means converting MD5 output
 to a number(32) unsigned is allowed, and encouraged. In SnowflakeDB use
 MD5_Number( x ) to convert.
+
+留意3：哈希结果，如果平台支持二进制格式保存，那么就用二进制格式保存，如果平台支持用大数值类型保存，那么就用大数值类型。Java以及类似SnowflakeDB的平台是支持number(32)无符号类型的。也就是说转换MD5输出成number(32)无符号类型是可以并且也被鼓励的。在SnowflakeDB平台用MD5_Number(x)来进行转换。
 
 NOTE 4: IF a hashing value will be utilized then it is required to design and
 document a hash collision strategy (see Wikipedia for birthday problem, and hash
